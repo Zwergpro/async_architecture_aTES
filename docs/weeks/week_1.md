@@ -19,13 +19,41 @@ https://lucid.app/documents/view/bbb4c204-cdf8-483e-8f2b-5a19108ac4bc
 
 ![Data model](https://lucid.app/publicSegments/view/13137830-3132-40f3-b9dc-dc1569f8860a/image.png)
 
+\
+Проанализировав ES модель и модель данных, решил выделить следующие поддомены:
+- Auth - отвечает за все, что связано с пользователями и их ролями
+- Task Tracking - отвечает за весь флоу задачи
+- Accounting - отвечает за все операции с балансом и выплату денег
+
+Далее для каждого поддомена выделил свой сервис:
+- Auth service
+- Task Tracking service
+- Accounting service
+
+Все связи между ними асинхронные.
+
+
 ### BE events
 https://lucid.app/documents/view/d1780e3f-9c48-47a9-a4e7-9f48376c3db9
 
 ![BE events](https://lucid.app/publicSegments/view/d244bd84-38cb-4f5c-9f82-6f2b59dadb4a/image.png)
 
+- Auth сервис отправляет BE событие об изменении роли пользователя, получатели: Accounting и Task Tracking
+- Task Tracking сервис отправляет следующие события, получатель - Accounting:
+  - о создании задачи (Task created)
+  - о назначении нового исполнителя (Task assigned)
+  - о завершении задачи (Task completed)
+
 ### CUD events
 https://lucid.app/documents/view/7c6faa59-85cf-4bbc-a6be-efc88e6c47e2
 
 ![CUD events](https://lucid.app/publicSegments/view/04aeca72-20e2-4cd6-b8f9-c6c1af633928/image.png)
+
+CUD события:
+- Auth service отправляет события с информацией о пользователе
+  - данные: id, username, email, status, updated_at
+  - получатели: Task Tracking, Accounting
+- Task Tracking отправляет события с информацией о задачах
+  - данные: id, description, status, updated_at
+  - получатели: Accounting
 
