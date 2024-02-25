@@ -12,13 +12,20 @@
 ### ES модель
 https://lucid.app/documents/view/0a23e7df-6521-4140-abf2-2c12d2ea6d44
 
+![ES модель](https://lucid.app/publicSegments/view/08e63b7f-2df4-404f-8b75-5f73b0fc16d5/image.png)
 
 ### Data model
 https://lucid.app/documents/view/bbb4c204-cdf8-483e-8f2b-5a19108ac4bc
 
+![Data model](https://lucid.app/publicSegments/view/13137830-3132-40f3-b9dc-dc1569f8860a/image.png)
 
 ### BE events
 https://lucid.app/documents/view/d1780e3f-9c48-47a9-a4e7-9f48376c3db9
 
+![BE events](https://lucid.app/publicSegments/view/d244bd84-38cb-4f5c-9f82-6f2b59dadb4a/image.png)
+
 ### CUD events
 https://lucid.app/documents/view/7c6faa59-85cf-4bbc-a6be-efc88e6c47e2
+
+![CUD events](https://lucid.app/publicSegments/view/04aeca72-20e2-4cd6-b8f9-c6c1af633928/image.png)
+
