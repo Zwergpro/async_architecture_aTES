@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+{% block title %}Access{% endblock %}
+
+{% block header %}
+    <h4>User: {{ request.user.username }}</h4>
+    public_id: {{ request.user.public_id }}<br>
+    role: {{ request.user.role }}<br>
+{% endblock %}
+
+{% block content %}
+<h3>Grant access to service:  {{ client.name }}</h3>
+<form action="{{ url_for('grant_access') }}" method="post">
+    <input type="hidden" name="client_id" value="{{ client.client_id }}">
+    <button style="background-color: darkseagreen">Access</button>
+</form>
+<br>
+<form action="{{ url_for('users_list') }}" method="get">
+    <button style="background-color: gray">Deny</button>
+</form>
+{% endblock %}

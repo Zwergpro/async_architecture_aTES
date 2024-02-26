@@ -1,0 +1,34 @@
+{% extends 'base.html'%}
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+<h3>My tasks</h3>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Executor</th>
+        <th>Creator</th>
+        <th></th>
+    </tr>
+    {% for task in tasks %}
+    <tr>
+        <td>{{ task.id }}</td>
+        <td>{{ task.title }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.status }}</td>
+        <td>{{ task.executor.username }}</td>
+        <td>{{ task.creator.username }}</td>
+        <td>
+            {% if task.status == task.status.IN_PROGRESS %}
+                <form action="{{ url_for('complete_task', task_id=task.id, executor_id=task.executor_id) }}" method="post">
+                    <button>Complete</button>
+                </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

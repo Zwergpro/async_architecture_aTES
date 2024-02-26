@@ -1,0 +1,137 @@
+services:
+  auth:
+    build:
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./:/app/
+    environment:
+      SECRET_KEY: 'auth_super_secret_key'
+      SECRETS: True
+      DEBUG: True
+      DATABASE_URL: 'postgresql+asyncpg://user:devpwd@postgres_db:7432/auth'
+    command: ['uvicorn', '--reload', '--port', '8010', '--host', '0.0.0.0', 'auth.src.main:app']
+    ports:
+      - 8010:8010
+    depends_on:
+      - postgres_db
+      - create_topics
+
+  tracker:
+    build:
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./:/app/
+    environment:
+      SECRET_KEY: 'tracker_super_secret_key'
+      SECRETS: True
+      DEBUG: True
+      DATABASE_URL: 'postgresql+asyncpg://user:devpwd@postgres_db:7432/tracker'
+    command: ['uvicorn', '--reload', '--port', '8020', '--host', '0.0.0.0', 'task_tracker.src.main:app']
+    ports:
+      - 8020:8020
+    depends_on:
+      - postgres_db
+      - create_topics
+
+  postgres_db:
+    image: postgres:16.2
+    shm_size: 128mb
+    volumes:
+      - ates_db_data:/var/lib/postgresql/data/
+      - ./etc/postgresql/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:r
+    ports:
+      - 7432:7432
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=auth:tracker
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=devpwd
+      - POSTGRES_HOST=postgres_db
+      - PGPORT=7432
+
+  zookeeper:
+    container_name: zookeeper
+    image: bitnami/zookeeper:latest
+    ports:
+      - 22181:2181
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      timeout: 15s
+      start_period: 10s
+      interval: 60s
+      retries: 25
+
+  kafka:
+    container_name: kafka
+    image: bitnami/kafka:latest
+    restart: on-failure
+    ports:
+      - 29092:29092
+      - 9092:9092
+    volumes:
+      - kafka_data:/bitnami/kafka
+    environment:
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:29092
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'kafka-topics.sh --bootstrap-server localhost:9092 --list'
+        ]
+      timeout: 5s
+      start_period: 10s
+      interval: 10s
+      retries: 25
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+
+  create_topics:
+    image: confluentinc/cp-kafka:latest.arm64
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic user.streaming --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic task.streaming --replication-factor 1 --partitions 1
+
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic auth.role-changed --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic auth.user-created --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic tracker.task-created --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic tracker.task-assigned --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic tracker.task-completed --replication-factor 1 --partitions 1
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:9092 --list
+      "
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8088:8080
+    depends_on:
+      - create_topics
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9092
+
+
+volumes:
+  ates_db_data:
+  zookeeper_data:
+  kafka_data:
