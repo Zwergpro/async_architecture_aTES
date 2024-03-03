@@ -28,15 +28,15 @@
             {% if request.user.role != user.role.ADMIN %}
                 {{ user.is_active }}
             {% else %}
-                {% if user.is_active %}
+                {% if user.is_active == True %}
                     <form  action="{{ url_for('change_user_activity', user_id=user.id ) }}" method="post">
-                        <input type="hidden" value="True" />
-                        <input type="submit" value="Deactivate" />
+                        <input type="hidden" value="False" name="is_active"/>
+                        <input type="submit" style="background-color: #F06048" value="Deactivate" />
                     </form>
                 {% else %}
                     <form  action="{{ url_for('change_user_activity', user_id=user.id ) }}" method="post">
-                        <input type="hidden" value="False" />
-                        <input type="submit" value="Activate" />
+                        <input type="hidden" value="True" name="is_active"/>
+                        <input type="submit" style="background-color: #029764" value="Activate" />
                     </form>
                 {% endif%}
             {% endif %}
