@@ -1,0 +1,43 @@
+{% extends 'base.html'%}
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+<nav>
+    <ul>
+        <li>
+            <form action="{{ url_for('create_task') }}" method="get">
+                <button>Create task</button>
+            </form>
+        </li>
+        {% if request.user.role in (request.user.role.ADMIN, request.user.role.MANAGER) %}
+            <li>
+                <form action="{{ url_for('assign_tasks') }}" method="post">
+                    <button>Assign tasks</button>
+                </form>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<h3>All tasks</h3>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Executor</th>
+        <th>Creator</th>
+    </tr>
+    {% for task in tasks %}
+    <tr>
+        <td>{{ task.id }}</td>
+        <td>{{ task.title }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.status }}</td>
+        <td>{{ task.executor.username }}</td>
+        <td>{{ task.creator.username }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

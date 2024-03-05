@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+
+    {% block style %}
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <style>
+    </style>
+    {% endblock %}
+</head>
+<body>
+    <header class="container">
+        {% block header %}
+            {% if request.user.is_authenticated %}
+                <nav>
+                    <ul>
+                        <li><strong>User: {{ request.user.username }}</strong></li>
+                    </ul>
+                    <ul>
+                        <li><a href="{{ url_for('logout') }}">logout</a></li>
+                    </ul>
+                </nav>
+                public_id: {{ request.user.public_id }}<br>
+                role: {{ request.user.role }}<br>
+                <br>
+
+                <nav>
+                    <ul>
+                        <li><a href="{{ url_for('get_all_tasks') }}">All tasks</a></li>
+                        <li><a href="{{ url_for('get_assigned_tasks', executor_id=request.user.id) }}">My tasks</a></li>
+                    </ul>
+                </nav>
+            {% endif %}
+        {% endblock %}
+    </header>
+    <hr>
+    <main class="container">{% block content %}{% endblock %}</main>
+    <footer>{% block footer %}{% endblock %}</footer>
+</body>
+</html>
