@@ -1,0 +1,11 @@
+{% extends 'base.html'%}
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('create_task') }}" method="post">
+    <input type="text" name="title" placeholder="Title" aria-label="Text" />
+    <textarea name="description" placeholder="Description" aria-label="Text"></textarea>
+
+    <button>Create</button>
+</form>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html'%}
+{% block title %}Clients{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('create_oauth_client') }}" method="post">
+    <fieldset class="grid">
+        <input
+            type="text"
+            name="name"
+            placeholder="name"
+            aria-label="Client name"
+        />
+        <input
+            type="url"
+            name="redirect_url"
+            placeholder="redirect url"
+            aria-label="Url"
+        />
+        <input
+            type="submit"
+            value="Create client"
+        />
+    </fieldset>
+</form>
+
+<br>
+<br>
+
+<h3>All clients</h3>
+<table>
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>redirect_url</th>
+        <th>client_id</th>
+        <th>client_secret</th>
+        <th>delete</th>
+    </tr>
+    {% for client in clients %}
+    <tr>
+        <td>{{ client.id }}</td>
+        <td>{{ client.name }}</td>
+        <td>{{ client.redirect_url }}</td>
+        <td>{{ client.client_id }}</td>
+        <td>{{ client.client_secret }}</td>
+        <td>
+            <form action="{{ url_for('delete_oauth_client', client_id=client.id) }}" method="post">
+                <button style="background-color: #D93526">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
