@@ -14,12 +14,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 
 from auth.src.api.dependencies import SessionDep
-from auth.src.events.producer import send_event
+from auth.src.events.producer import send_user_lifecycle_event
+from auth.src.events.producer import send_user_streaming_event
+from auth.src.events.user_lifecycle import UserCreated
 from auth.src.repositories.user import UserRepository
 from auth.src.services.auth.beckend import authenticate_user
 from auth.src.services.auth.beckend import get_password_hash
-from packages.schema_registry.events.user import UserCreated
-from packages.schema_registry.events.user import UserCUD
 
 router = APIRouter()
 templates = Jinja2Templates(directory='auth/src/templates/')
@@ -81,17 +81,8 @@ async def signup(
 
     redirect_url = next_url or request.url_for('users_list')
 
-    await send_event(
-        topic='user.streaming',
-        value=UserCUD.from_orm(user).json(),
-        key=str(user.id),
-    )
-
-    await send_event(
-        topic='auth.user-created',
-        value=UserCreated.from_orm(user).json(),
-        key=str(user.id),
-    )
+    await send_user_streaming_event(user)
+    await send_user_lifecycle_event(user, UserCreated)
 
     request.session['username'] = user.username
     request.session['exp'] = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=5)

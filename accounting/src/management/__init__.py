@@ -5,7 +5,7 @@ from typing import NoReturn
 
 import typer
 
-from auth.src.conf import settings
+from accounting.src.conf import settings
 
 init_commands = typer.Typer()
 
@@ -20,7 +20,8 @@ def find_commands(command_dir: str) -> list[str]:
 
 def get_commands() -> dict[str, str]:
     return {
-        name: 'src' for name in find_commands(settings.BASE_DIR / 'auth/src/management/commands/')
+        name: 'src'
+        for name in find_commands(settings.BASE_DIR / 'accounting/src/management/commands/')
     }
 
 

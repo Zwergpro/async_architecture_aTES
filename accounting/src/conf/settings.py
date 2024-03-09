@@ -8,15 +8,15 @@ from pydantic_settings import BaseSettings
 
 
 class AlembicSettings(BaseModel):
-    config: str = 'task_tracker/src/alembic/alembic.ini'
-    directory: str = 'task_tracker/src/alembic'
+    config: str = 'accounting/src/alembic/alembic.ini'
+    directory: str = 'accounting/src/alembic'
 
 
 class OAuthSettings(BaseModel):
     SERVICE_URL: str = 'http://127.0.0.1:8010/v1/oauth/grant_access/'
     SERVICE_USER_INFO_URL: str = 'http://auth:8010/v1/oauth/user_info/'
-    CLIENT_ID: str = 'MRXSY'
-    CLIENT_SECRET: str = 'Q08QBRLPPK'
+    CLIENT_ID: str = 'PHKZQ'
+    CLIENT_SECRET: str = 'YYXBBE054P'
 
 
 class Settings(BaseSettings):

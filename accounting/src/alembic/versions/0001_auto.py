@@ -2,7 +2,7 @@
 
 Revision ID: 0001
 Revises:
-Create Date: 2024-03-09 11:00:56.504351
+Create Date: 2024-03-09 11:43:46.708412
 
 """
 
@@ -40,22 +40,18 @@ def upgrade() -> None:
     )
     op.create_table(
         'tracker__task',
-        sa.Column('executor_id', sa.Integer(), nullable=False),
-        sa.Column('creator_id', sa.Integer(), nullable=False),
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column(
-            'public_id', sa.UUID(), server_default=sa.text('gen_random_uuid()'), nullable=False
-        ),
+        sa.Column('public_id', sa.UUID(), nullable=False),
         sa.Column('title', sa.String(), nullable=False),
         sa.Column('description', sa.String(), nullable=False),
         sa.Column(
             'status', sa.Enum('IN_PROGRESS', 'DONE', 'DELETED', name='taskstatus'), nullable=False
         ),
+        sa.Column('assign_price', sa.Integer(), nullable=False),
+        sa.Column('complete_price', sa.Integer(), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),
         sa.Column('completed_at', sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(['creator_id'], ['auth__user.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['executor_id'], ['auth__user.id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('public_id'),
     )

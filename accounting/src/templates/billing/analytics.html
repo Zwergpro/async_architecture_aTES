@@ -1,0 +1,64 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<nav>
+    <ul>
+    </ul>
+</nav>
+
+<br>
+
+
+Заработали за сегодня: {{ earned_today }} у.е.
+<br>
+Попугов ушло в минус: {{ workers_with_negative_balance }}
+
+
+<br><br>
+
+<h4>Last month</h4>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+    </tr>
+    {% for first_date, last_date, amount in most_expensive_task_last_month %}
+    <tr>
+        <td>{{ first_date }} - {{ last_date }}</td>
+        <td>{{ amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h4>Per week</h4>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+    </tr>
+    {% for first_date, last_date, amount in most_expensive_task_per_week %}
+    <tr>
+        <td>{{ first_date }} - {{ last_date }}</td>
+        <td>{{ amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h4>Per day</h4>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+    </tr>
+    {% for date, amount in most_expensive_task_per_day %}
+    <tr>
+        <td>{{ date }}</td>
+        <td>{{ amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}

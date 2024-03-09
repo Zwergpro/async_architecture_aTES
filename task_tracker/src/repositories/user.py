@@ -20,8 +20,8 @@ class UserRepository:
         result = await self.db.execute(select(User).where(User.public_id == public_id))
         return result.scalars().first()
 
-    async def create_user(self, username: str, public_id: uuid.UUID, role: Role) -> User:
-        user = await self.get_user_by_username(username)
+    async def create_user(self, public_id: uuid.UUID, username: str, role: Role) -> User:
+        user = await self.get_user_by_public_id(public_id)
         if user:
             raise Exception
 

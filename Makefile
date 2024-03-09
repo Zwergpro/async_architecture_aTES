@@ -16,6 +16,16 @@ tracker_migrate:
 	docker compose run -ti --rm tracker python task_tracker/manage.py migrate
 
 
+
+.PHONY: accounting_makemigrations,accounting_migrate
+
+accounting_makemigrations:
+	docker compose run -ti --rm accounting python accounting/manage.py makemigrations
+
+accounting_migrate:
+	docker compose run -ti --rm accounting python accounting/manage.py migrate
+
+
 format:
 	ruff format .
 	isort .

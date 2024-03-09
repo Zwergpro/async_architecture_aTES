@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% block head %}
-    <title>Auth - {% block title %}{% endblock %}</title>
+    <title>Accounting - {% block title %}{% endblock %}</title>
     {% endblock %}
 
     {% block style %}
@@ -32,9 +32,20 @@
 
                 <nav>
                     <ul>
-                        <li><a href="{{ url_for('users_list') }}">Users</a></li>
-                        <li><a href="{{ url_for('get_all_oauth_clients') }}">Clients</a></li>
+                        <li><a href="{{ url_for('get_account_info') }}">Account</a></li>
+                        {% if request.user.role == request.user.role.ADMIN %}
+                            <li><a href="{{ url_for('get_all_transactions') }}">Transactions</a></li>
+                            <li><a href="{{ url_for('get_analytic_info') }}">Analytics</a></li>
+                        {% endif %}
                     </ul>
+
+                    {% if request.user.role == request.user.role.ADMIN %}
+                        <ul>
+                            <form action="{{ url_for('complete_billing_cycle') }}" method="post">
+                                <button>Complete billing cycle</button>
+                            </form>
+                        </ul>
+                    {% endif %}
                 </nav>
             {% endif %}
         {% endblock %}
