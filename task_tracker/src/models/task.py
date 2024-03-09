@@ -49,6 +49,7 @@ class Task(Base):
 
     title: Mapped[str]
     description: Mapped[str]
+    jira_id: Mapped[str] = mapped_column(String(30), default='', server_default='""')
     status: Mapped[TaskStatus] = mapped_column(default=TaskStatus.IN_PROGRESS)
 
     created_at: Mapped[datetime.datetime] = mapped_column(default_factory=datetime.datetime.now)
