@@ -1,0 +1,45 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<nav>
+  <ul>
+  </ul>
+</nav>
+
+<br>
+<h3>Account: {{ account.id }}</h3>
+<h4>Balance: {{ account.balance }} у.е.</h4>
+{% if active_billing_cycle %}
+  <h4>Active billing cycle: {{ active_billing_cycle.id }} started at {{ active_billing_cycle.start_dt }}</h4>
+{% endif %}
+<br>
+
+<h3>All transaction</h3>
+
+{% for date, transactions in transactions_per_day.items() %}
+  <h4>{{ date }}</h4>
+  <table>
+    <tr>
+      <th>Id</th>
+      <th>Datetime</th>
+      <th>Billing Cycle</th>
+      <th>Task ID</th>
+      <th>Description</th>
+      <th>Credit</th>
+      <th>Debit</th>
+    </tr>
+    {% for transaction in transactions %}
+    <tr>
+      <td>{{ transaction.id }}</td>
+      <td>{{ transaction.processing_dt }}</td>
+      <td>{{ transaction.billing_cycle_id }}</td>
+      <td>{{ transaction.task_id or '' }}</td>
+      <td>{{ transaction.description }}</td>
+      <td>{{ transaction.credit }}</td>
+      <td>{{ transaction.debit }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endfor %}
+
+{% endblock %}

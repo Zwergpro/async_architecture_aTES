@@ -1,0 +1,34 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<nav>
+  <ul>
+  </ul>
+</nav>
+
+<h3>All transaction</h3>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Datetime</th>
+    <th>Username</th>
+    <th>Billing Cycle</th>
+    <th>Task ID</th>
+    <th>Description</th>
+    <th>Credit</th>
+    <th>Debit</th>
+  </tr>
+  {% for transaction in transactions %}
+    <tr>
+      <td>{{ transaction.id }}</td>
+      <td>{{ transaction.processing_dt }}</td>
+      <td>{{ transaction.account.user.username }}</td>
+      <td>{{ transaction.billing_cycle_id }}</td>
+      <td>{{ transaction.task_id or '' }}</td>
+      <td>{{ transaction.description }}</td>
+      <td>{{ transaction.credit }}</td>
+      <td>{{ transaction.debit }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -3,6 +3,7 @@
 
 {% block content %}
 <form action="{{ url_for('create_task') }}" method="post">
+    <input type="jira_id" name="jira_id" placeholder="Jira id" aria-label="Text" />
     <input type="text" name="title" placeholder="Title" aria-label="Text" />
     <textarea name="description" placeholder="Description" aria-label="Text"></textarea>
 
