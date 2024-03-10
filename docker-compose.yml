@@ -35,6 +35,24 @@ services:
       - postgres_db
       - create_topics
 
+  accounting:
+    build:
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./:/app/
+    environment:
+      SECRET_KEY: 'accounting_super_secret_key'
+      SECRETS: True
+      DEBUG: True
+      DATABASE_URL: 'postgresql+asyncpg://user:devpwd@postgres_db:7432/accounting'
+    command: ['uvicorn', '--reload', '--port', '8030', '--host', '0.0.0.0', 'accounting.src.main:app']
+    ports:
+      - 8030:8030
+    depends_on:
+      - postgres_db
+      - create_topics
+
   postgres_db:
     image: postgres:16.2
     shm_size: 128mb
@@ -44,7 +62,7 @@ services:
     ports:
       - 7432:7432
     environment:
-      - POSTGRES_MULTIPLE_DATABASES=auth:tracker
+      - POSTGRES_MULTIPLE_DATABASES=auth:tracker:accounting
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=devpwd
       - POSTGRES_HOST=postgres_db
@@ -106,13 +124,10 @@ services:
       "
       echo -e 'Creating kafka topics'
       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic user.streaming --replication-factor 1 --partitions 1
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic task.streaming --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic user.lifecycle --replication-factor 1 --partitions 1
 
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic auth.role-changed --replication-factor 1 --partitions 1
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic auth.user-created --replication-factor 1 --partitions 1
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic tracker.task-created --replication-factor 1 --partitions 1
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic tracker.task-assigned --replication-factor 1 --partitions 1
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic tracker.task-completed --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic task.streaming --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic task.lifecycle --replication-factor 1 --partitions 1
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka:9092 --list
